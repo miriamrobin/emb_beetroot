@@ -1,0 +1,62 @@
+#include <Arduino.h>
+
+// Піни
+const int led1 = 18;
+const int led2 = 19;
+const int buttonExt = 23;
+const int buttonBoot = 0;
+
+// Режими
+int mode = 0; 
+// 0 - нормальний
+// 1 - швидкий
+// 2 - повільний
+
+void setup() {
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+
+  pinMode(buttonExt, INPUT_PULLUP);
+  pinMode(buttonBoot, INPUT_PULLUP);
+
+  Serial.begin(115200);
+}
+
+void loop() {
+
+  // --- КНОПКА ЗОВНІШНЯ ---
+  if (digitalRead(buttonExt) == LOW) {
+    mode = 1;
+    Serial.println("ШВИДКИЙ режим");
+    delay(200); // debounce
+  }
+
+  // --- КНОПКА BOOT ---
+  if (digitalRead(buttonBoot) == LOW) {
+    mode = 2;
+    Serial.println("ПОВІЛЬНИЙ режим");
+    delay(200); // debounce
+  }
+
+  // --- МИГОТІННЯ ---
+  int delayTime;
+
+  switch (mode) {
+    case 1:
+      delayTime = 200; // швидкий
+      break;
+    case 2:
+      delayTime = 1000; // повільний
+      break;
+    default:
+      delayTime = 500; // стандартний
+  }
+
+  digitalWrite(led1, HIGH);
+  digitalWrite(led2, LOW);
+  delay(delayTime);
+
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, HIGH);
+  delay(delayTime);
+}
