@@ -1,62 +1,53 @@
 #include <Arduino.h>
 
-// Піни
-const int led1 = 18;
-const int led2 = 19;
-const int buttonExt = 23;
-const int buttonBoot = 0;
+#define LED1_PIN 18
+#define LED2_PIN 19
+#define BUTTON_EXT 23
+#define BUTTON_BOOT 0
 
-// Режими
-int mode = 0; 
-// 0 - нормальний
-// 1 - швидкий
-// 2 - повільний
+#define FAST_DELAY 200
+#define SLOW_DELAY 1000
+#define NORMAL_DELAY 500
+
+int mode = 0;
 
 void setup() {
-  pinMode(led1, OUTPUT);
-  pinMode(led2, OUTPUT);
+  pinMode(LED1_PIN, OUTPUT);
+  pinMode(LED2_PIN, OUTPUT);
 
-  pinMode(buttonExt, INPUT_PULLUP);
-  pinMode(buttonBoot, INPUT_PULLUP);
+  pinMode(BUTTON_EXT, INPUT_PULLUP);
+  pinMode(BUTTON_BOOT, INPUT_PULLUP);
 
   Serial.begin(115200);
 }
 
 void loop() {
 
-  // --- КНОПКА ЗОВНІШНЯ ---
-  if (digitalRead(buttonExt) == LOW) {
+  if (digitalRead(BUTTON_EXT) == LOW) {
     mode = 1;
-    Serial.println("ШВИДКИЙ режим");
-    delay(200); // debounce
+    Serial.println("Faster");
+    delay(200);
   }
 
-  // --- КНОПКА BOOT ---
-  if (digitalRead(buttonBoot) == LOW) {
+  if (digitalRead(BUTTON_BOOT) == LOW) {
     mode = 2;
-    Serial.println("ПОВІЛЬНИЙ режим");
-    delay(200); // debounce
+    Serial.println("Slower");
+    delay(200);
   }
 
-  // --- МИГОТІННЯ ---
   int delayTime;
 
   switch (mode) {
-    case 1:
-      delayTime = 200; // швидкий
-      break;
-    case 2:
-      delayTime = 1000; // повільний
-      break;
-    default:
-      delayTime = 500; // стандартний
+    case 1: delayTime = FAST_DELAY; break;
+    case 2: delayTime = SLOW_DELAY; break;
+    default: delayTime = NORMAL_DELAY;
   }
 
-  digitalWrite(led1, HIGH);
-  digitalWrite(led2, LOW);
+  digitalWrite(LED1_PIN, HIGH);
+  digitalWrite(LED2_PIN, LOW);
   delay(delayTime);
 
-  digitalWrite(led1, LOW);
-  digitalWrite(led2, HIGH);
+  digitalWrite(LED1_PIN, LOW);
+  digitalWrite(LED2_PIN, HIGH);
   delay(delayTime);
 }
