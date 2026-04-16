@@ -1,0 +1,28 @@
+#include <Arduino.h>
+
+#define BUTTON_PIN 15
+
+volatile int counter = 0;
+volatile unsigned long lastInterruptTime = 0;
+
+void IRAM_ATTR buttonISR() {
+  unsigned long now = millis();
+
+  if (now - lastInterruptTime > 10) {
+    counter++;
+    lastInterruptTime = now;
+  }
+}
+
+void setup() {
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  Serial.begin(115200);
+
+  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), buttonISR, FALLING);
+}
+
+void loop() {
+  Serial.print("Count: ");
+  Serial.println(counter);
+  delay(500);
+}
